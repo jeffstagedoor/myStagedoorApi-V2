@@ -1,27 +1,23 @@
 <?php
 /**
-*	Configuration file
-*
-*	This File describes the basic api configuration such as database credentials, folder structure,
-*	debug switches, urls, ..
-*
-*	@author Jeff Frohner
-*	@version 2.0.0
-*/
+ * This is the main entrance to this API, 
+ * .htaccess shall redirect all calls to api.domain.com and domain.com/api to this file
+ * 
+ * 
+ */
 
-use myStagedoor\Api\Environment;
+namespace myStagedoor;
+use myStagedoor\Config\Environment;
 
+include('autoloader.php');
 
 Environment::init();
-
 // add routes that don't need authentication
 Environment::addNoAuthRoutes([
-					// "task/acceptInvitation",
-					"task/account2workgroupInvitationGetData",
-					"task/account2workgroupInvitationResponse",
-					]);
-
-#echo $_SERVER['SERVER_NAME'];
+	// "task/acceptInvitation",
+	"task/account2workgroupInvitationGetData",
+	"task/account2workgroupInvitationResponse",
+]);
 
 switch ($_SERVER['SERVER_NAME']) {
 	// production urls
@@ -71,3 +67,5 @@ switch ($_SERVER['SERVER_NAME']) {
 		break;
 }
 
+$Api = Api::getInstance();
+$Api->start();
