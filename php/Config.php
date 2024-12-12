@@ -50,7 +50,7 @@ switch ($_SERVER['SERVER_NAME']) {
 
 	// development urls
 	case 'localhost':
-	case 'mystagedoor.local':
+	case 'mystagedoorV2.local':
 	case '127.0.0.1':
 		Environment::$production = false;
 		Environment::$development = true;
@@ -63,7 +63,7 @@ switch ($_SERVER['SERVER_NAME']) {
 					"db" => "mystagedoor" 
 		);
 
-		Environment::$urls->baseUrl = "http://mystagedoor.local/php";
+		Environment::$urls->baseUrl = "http://mystagedoorV2.local/php";
 		Environment::$urls->appUrl = "http://localhost:4200/";
 		
 		Environment::$api->noAuth = false;
