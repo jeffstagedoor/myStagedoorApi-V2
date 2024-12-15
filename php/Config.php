@@ -9,8 +9,8 @@
 *	@version 2.0.0
 */
 
-use myStagedoor\Api\Environment;
-
+use myStagedoor\Config\Environment;
+use myStagedoor\Log;
 
 Environment::init();
 
@@ -49,7 +49,7 @@ switch ($_SERVER['SERVER_NAME']) {
 
 	// development urls
 	case 'localhost':
-	case 'mystagedoorV2.local':
+	case 'mystagedoorv2.local':
 	case '127.0.0.1':
 		Environment::$production = false;
 		Environment::$development = true;
@@ -62,12 +62,13 @@ switch ($_SERVER['SERVER_NAME']) {
 					"db" => "mystagedoor" 
 		);
 
-		Environment::$urls->baseUrl = "http://mystagedoorV2.local/php";
+		Environment::$urls->baseUrl = "http://mystagedoorv2.local/php";
 		Environment::$urls->appUrl = "http://localhost:4200/";
 		
 		Environment::$api->noAuth = false;
 		Environment::$api->allowOrigin = "http://localhost:4200";  // should only be there in develepment
 		Environment::$api->possibleOrigins = ["http://localhost:4200"];
+		Environment::$logLevels = [Log\Level::CRITICAL, Log\Level::ERROR,Log\Level::NOTICE ,Log\LEVEL::INFO /*,Log\Level::DEBUG,Log\Level::TRACE*/];
 		break;
 }
 

@@ -1,9 +1,12 @@
 <?php
 namespace myStagedoor;
+use myStagedoor\Log;
+use myStagedoor\Log\Api as ApiLog;
+use myStagedoor\Error\ErrorHandler;
 
 class Api {
-	/** @var instance of myStagedoor\API */
-	static private $instance = null;
+	/** @var \myStagedoor\API */
+	static private ? Api $instance = null;
 
 	/** 
 	 * for development only - disables authorization. Set in Environment.
@@ -34,11 +37,14 @@ class Api {
 	/** @var array all the models found in this installation */
 	private array $models;
 
-	/** @var object an Object that describes the current request */
-	private $request;
+	/** @var Request an Object that describes the current request */
+	private Request $request;
 
 	/** @var object all the data that has been sent with the request */
-	private $data;
+	private object $data;
+
+	/** @var \MysqliDb the Database-Class */
+	private \MysqliDb $db;
 
 	// /** @var Jeff\Api\Log\Log The Logging class */
 	// private $log;
@@ -71,7 +77,7 @@ class Api {
 	protected function __clone()
 	{ }
 
-		/**
+	/**
 	 * The startup
 	 *
 	 * Will _instanciate_ an
@@ -79,15 +85,31 @@ class Api {
 	 * - MysqliDb (and assign to this->db)
 	 * - Account
 	 *	
-	 * will connect to database (throws Errors if not successfull).
-	 *
-	 * will analyse the made $request, get needed $models, authorize the current user     
-	 * and will delegate to ApiGet, ApiPost, ApiPut, ApiDelete depending on the request made.
-	 *	
-	 */
-	public function start(): void
+	* will connect to database (throws Errors if not successfull).
+	* 
+	* will init Log\Log
+	*
+	* will analyse the made $request, get needed $models, authorize the current user     
+	* and will delegate to Api\Get, Api\Post, Api\Put, Api\Delete depending on the request made.
+	*	
+	*/
+	public function start(\MysqliDb $db ): void
 	{
-		echo "starting API";
+		$this->db = $db;
+		try {
+			$this->db->connect();
+			ApiLog::write('database connected', Log\Level::TRACE);
+		} catch (\Exception $e) {
+			$this->db = NULL;
+			ErrorHandler::add(array("DB Error", "Could not connect to database", 500, true, ErrorHandler::CRITICAL_ALL));
+			ErrorHandler::sendErrors();
+			ErrorHandler::sendApiErrors();
+			exit;
+		}
 
+		// get Request
+		$this->request = new Request();
+
+		echo Api\Info::getApiInfo();
 	}
 }

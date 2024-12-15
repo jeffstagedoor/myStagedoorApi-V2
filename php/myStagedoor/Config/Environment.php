@@ -13,7 +13,7 @@
 * 
 * ```
 * <?php
-* use Jeff\Api\Environment;
+* use myStagedoor\Config\Environment;
 * Environment::init();
 * // no you can overwrite the settings (based on `$_SERVER['SERVER_NAME']` for example)
 * Environment::$database = Array( 
@@ -26,7 +26,7 @@
 *
 */
 namespace myStagedoor\Config;
-
+use myStagedoor\Log;
 
 /**
 *	Static Class Environment
@@ -42,6 +42,8 @@ Class Environment
 	public static $production = true;
 	public static $development = false;
 	public static $debug = false;
+
+	public static $logLevels = [Log\Level::CRITICAL, Log\Level::ERROR, Log\Level::WARNING, Log\Level::NOTICE];
 	public static $database = Array(
 			"username" => "",
 			"password" => "", 
@@ -80,6 +82,7 @@ Class Environment
 	public static $dirs;
 	public static $api;
 	public static $publicFolders = [];
+	public static $specialVerbs = ['dbupdate', 'meta', 'import', 'apiInfo',	'fileUpload', 'changePassword', 'changeName'];
 
 	/**
 	 * prevent constructor from beeing called to make this a static class
@@ -98,12 +101,13 @@ Class Environment
 		self::$urls->tasksUrl = "api/task/";
 
 		self::$dirs = new \stdClass();
-		self::$dirs->appRoot = dirname(__FILE__).DIRECTORY_SEPARATOR.self::folderUp(4);
-		self::$dirs->vendor = __DIR__.DIRECTORY_SEPARATOR.self::folderUp(3);
+		self::$dirs->appRoot = dirname(__FILE__).DIRECTORY_SEPARATOR.self::folderUp(2);
+		self::$dirs->vendor = __DIR__.DIRECTORY_SEPARATOR.self::folderUp(3).DIRECTORY_SEPARATOR.'vendor';
 		self::$dirs->api = __DIR__.DIRECTORY_SEPARATOR;
 		#echo "<br>".self::$dirs->appRoot."models".DIRECTORY_SEPARATOR."<br>";
 		self::$dirs->models = self::$dirs->appRoot."models".DIRECTORY_SEPARATOR;
 		self::$dirs->files = self::folderUp(2)."files".DIRECTORY_SEPARATOR;
+		self::$dirs->apiLog = __DIR__.DIRECTORY_SEPARATOR.self::folderUp(3).'apiLog';
 		// $this->dirs->phpRoot = "..".DIRECTORY_SEPARATOR;
 
 		self::$api = new \stdClass();
